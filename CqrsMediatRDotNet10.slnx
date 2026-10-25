@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CqrsMediatRDotNet10.Api/CqrsMediatRDotNet10.Api.csproj" />
+    <Project Path="src/MediatorAlternative.Demo/MediatorAlternative.Demo.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CqrsMediatRDotNet10.Tests/CqrsMediatRDotNet10.Tests.csproj" />
+  </Folder>
+</Solution>
