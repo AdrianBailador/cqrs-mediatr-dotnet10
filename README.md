@@ -8,7 +8,7 @@ Companion repo for [CQRS with MediatR, Revisited for .NET 10](https://adrianbail
   - `ValidationBehavior` — runs FluentValidation validators before the handler, short-circuits with a `ValidationException` that an `IExceptionHandler` turns into a 400 `ValidationProblemDetails`.
   - `LoggingBehavior` — times every request and logs it, valid or not.
   - `ProductCreatedEvent` / `ProductCreatedEventHandler` — a domain notification published after a successful create, handled separately from the write itself.
-- **`MediatorAlternative.Demo`** — the same `CreateProductCommand` shape, rewritten against [martinothamar/Mediator](https://github.com/martinothamar/Mediator) instead of MediatR. Source-generated, MIT-licensed, no license key, no reflection-based assembly scanning. Proves the handler code barely changes if you don't want the licensing conversation at all.
+- **`MediatorAlternative.Demo`** — the same `CreateProductCommand` *shape*, rewritten against [martinothamar/Mediator](https://github.com/martinothamar/Mediator) instead of MediatR. Source-generated, MIT-licensed, no license key, no reflection-based assembly scanning. It's deliberately thin — a static counter instead of persistence, no notification published — to compare the mediator plumbing, not to claim functional parity with the API's `CreateProductCommandHandler`.
 - **`CqrsMediatRDotNet10.Tests`** — 8 tests against a real SQLite database kept in memory, not a mocked `DbContext` and not EF Core's InMemory provider (mocking `SaveChangesAsync`/`DbSet<T>` is fragile, and InMemory skips real relational behavior — constraints, actual query translation — that SQLite doesn't).
 
 ## A detail about `next()`, not a bug
