@@ -21,8 +21,7 @@ builder.Services.AddMediatR(cfg =>
 
     // Community edition is free under $5M annual revenue, but MediatR 13+ still wants a
     // license key for usage auditing. Register at https://mediatr.io, then set it via
-    // MEDIATR_LICENSE_KEY (or LUCKYPENNY_LICENSE_KEY) rather than hardcoding it here —
-    // see the "MediatR's License, In Practice" section of the companion article.
+    // MEDIATR_LICENSE_KEY (or LUCKYPENNY_LICENSE_KEY) rather than hardcoding it here.
     var licenseKey = builder.Configuration["MediatR:LicenseKey"];
     if (!string.IsNullOrWhiteSpace(licenseKey))
     {

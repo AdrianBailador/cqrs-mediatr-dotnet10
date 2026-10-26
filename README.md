@@ -1,6 +1,6 @@
 # CQRS with MediatR on .NET 10
 
-Companion repo for [MediatR Needs a License Key Now. Most CQRS Guides Don't Mention That.](https://adrianbailador.github.io/blog/) — a runnable CQRS setup on .NET 10 and MediatR 14, built to show what actually changed since MediatR went dual-licensed in 2025: the license key registration, cancellation-token propagation through pipeline behaviors, and a source-generated alternative that sidesteps the licensing question entirely.
+Companion repo for [I Rewrote My 2024 CQRS Guide for .NET 10. It Had a Bug I Never Caught.](https://adrianbailador.github.io/blog/75-cqrs-mediatr-dotnet10-rebuilt/) — a runnable CQRS setup on .NET 10 and MediatR 14, rebuilt from scratch instead of patched in place. It's what surfaced a real cancellation-token propagation bug in the pipeline behaviors, alongside the license key registration MediatR now needs and a source-generated alternative worth knowing about.
 
 ## What's here
 
