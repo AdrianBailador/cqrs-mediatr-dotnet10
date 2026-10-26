@@ -45,8 +45,9 @@ public class ValidationBehaviorTests
     public async Task Handle_ForwardsTheCallersCancellationToken_ToNext()
     {
         // RequestHandlerDelegate<T>'s CancellationToken parameter has a default value, so
-        // `next()` compiles but silently drops the real token. This pins the fix: `next`
-        // must be invoked with the token the pipeline was given.
+        // `next()` compiles without it — MediatR's own pipeline substitutes the real token
+        // back in when that happens, so this isn't guarding against data loss. It pins the
+        // behavior this codebase actually relies on: next(cancellationToken), explicit.
         var behavior = new ValidationBehavior<CreateProductCommand, int>(
             [new CreateProductCommandValidator()]);
         using var cts = new CancellationTokenSource();

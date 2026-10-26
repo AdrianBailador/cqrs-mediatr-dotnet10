@@ -1,6 +1,6 @@
 # CQRS with MediatR on .NET 10
 
-Companion repo for [I Rewrote My 2024 CQRS Guide for .NET 10. It Had a Bug I Never Caught.](https://adrianbailador.github.io/blog/75-cqrs-mediatr-dotnet10-rebuilt/) — a runnable CQRS setup on .NET 10 and MediatR 14, rebuilt from scratch instead of patched in place. It's what surfaced a real cancellation-token propagation bug in the pipeline behaviors, alongside the license key registration MediatR now needs and a source-generated alternative worth knowing about.
+Companion repo for [CQRS with MediatR, Revisited for .NET 10](https://adrianbailador.github.io/blog/75-cqrs-mediatr-dotnet10-rebuilt/) — a runnable CQRS setup on .NET 10 and MediatR 14, rebuilt from scratch instead of patched in place: the license key registration MediatR now needs, pipeline behaviors and exception handling done properly, EF Core InMemory tests instead of a mocked `DbContext`, and a source-generated alternative worth knowing about.
 
 ## What's here
 
@@ -9,11 +9,11 @@ Companion repo for [I Rewrote My 2024 CQRS Guide for .NET 10. It Had a Bug I Nev
   - `LoggingBehavior` — times every request and logs it, valid or not.
   - `ProductCreatedEvent` / `ProductCreatedEventHandler` — a domain notification published after a successful create, handled separately from the write itself.
 - **`MediatorAlternative.Demo`** — the same `CreateProductCommand` shape, rewritten against [martinothamar/Mediator](https://github.com/martinothamar/Mediator) instead of MediatR. Source-generated, MIT-licensed, no license key, no reflection-based assembly scanning. Proves the handler code barely changes if you don't want the licensing conversation at all.
-- **`CqrsMediatRDotNet10.Tests`** — 8 tests against the EF Core InMemory provider, not a mocked `DbContext` (mocking `SaveChangesAsync`/`DbSet<T>` behavior is fragile and tells you less than it looks like it does). Includes a regression test for a real bug this repo hit while building it: see below.
+- **`CqrsMediatRDotNet10.Tests`** — 8 tests against the EF Core InMemory provider, not a mocked `DbContext` (mocking `SaveChangesAsync`/`DbSet<T>` behavior is fragile and tells you less than it looks like it does).
 
-## The bug this repo caught
+## A detail about `next()`, not a bug
 
-`RequestHandlerDelegate<TResponse>`'s `CancellationToken` parameter has a default value. `await next()` compiles — and silently stops forwarding the caller's actual token to the rest of the pipeline. `ValidationBehaviorTests.Handle_ForwardsTheCallersCancellationToken_ToNext` pins the fix (`next(cancellationToken)`, explicit, every time).
+`RequestHandlerDelegate<TResponse>`'s `CancellationToken` parameter has a default value, so `await next()` compiles without it. That's not a footgun: MediatR's own pipeline wrapper (`RequestHandlerWrapperImpl` in its source) substitutes the original request token back in whenever it sees `default` at any layer, so the caller's real token always reaches the handler either way. This repo still calls `next(cancellationToken)` explicitly throughout — it reads clearer, and it's the only way to intentionally pass a *different* token downstream without that fallback overriding it. `ValidationBehaviorTests.Handle_ForwardsTheCallersCancellationToken_ToNext` pins that explicit behavior.
 
 ## MediatR's license key
 
