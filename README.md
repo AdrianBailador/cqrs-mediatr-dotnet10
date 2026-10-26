@@ -1,6 +1,6 @@
 # CQRS with MediatR on .NET 10
 
-Companion repo for [CQRS with MediatR, Revisited for .NET 10](https://adrianbailador.github.io/blog/75-cqrs-mediatr-dotnet10-rebuilt/) — a runnable CQRS setup on .NET 10 and MediatR 14, rebuilt from scratch instead of patched in place: the license key registration MediatR now needs, pipeline behaviors and exception handling done properly, EF Core InMemory tests instead of a mocked `DbContext`, and a source-generated alternative worth knowing about.
+Companion repo for [CQRS with MediatR, Revisited for .NET 10](https://adrianbailador.github.io/blog/75-cqrs-mediatr-dotnet10-rebuilt/) — a runnable CQRS setup on .NET 10 and MediatR 14, rebuilt from scratch instead of patched in place: the license key registration MediatR now needs, pipeline behaviors and exception handling done properly, SQLite-in-memory tests instead of a mocked `DbContext`, and a source-generated alternative worth knowing about.
 
 ## What's here
 
@@ -9,7 +9,7 @@ Companion repo for [CQRS with MediatR, Revisited for .NET 10](https://adrianbail
   - `LoggingBehavior` — times every request and logs it, valid or not.
   - `ProductCreatedEvent` / `ProductCreatedEventHandler` — a domain notification published after a successful create, handled separately from the write itself.
 - **`MediatorAlternative.Demo`** — the same `CreateProductCommand` shape, rewritten against [martinothamar/Mediator](https://github.com/martinothamar/Mediator) instead of MediatR. Source-generated, MIT-licensed, no license key, no reflection-based assembly scanning. Proves the handler code barely changes if you don't want the licensing conversation at all.
-- **`CqrsMediatRDotNet10.Tests`** — 8 tests against the EF Core InMemory provider, not a mocked `DbContext` (mocking `SaveChangesAsync`/`DbSet<T>` behavior is fragile and tells you less than it looks like it does).
+- **`CqrsMediatRDotNet10.Tests`** — 8 tests against a real SQLite database kept in memory, not a mocked `DbContext` and not EF Core's InMemory provider (mocking `SaveChangesAsync`/`DbSet<T>` is fragile, and InMemory skips real relational behavior — constraints, actual query translation — that SQLite doesn't).
 
 ## A detail about `next()`, not a bug
 
@@ -52,9 +52,10 @@ src/CqrsMediatRDotNet10.Api/
 src/MediatorAlternative.Demo/  same CreateProduct flow on martinothamar/Mediator
 
 tests/CqrsMediatRDotNet10.Tests/
-  CreateProductCommandHandlerTests.cs    persistence + event publishing, EF Core InMemory
+  SqliteTestContext.cs                   real SQLite database, in memory, per test
+  CreateProductCommandHandlerTests.cs    persistence + event publishing
   GetProductByIdQueryHandlerTests.cs
-  ValidationBehaviorTests.cs             validation short-circuit + cancellation-token propagation
+  ValidationBehaviorTests.cs             validation short-circuit + explicit token forwarding
 ```
 
 ## License

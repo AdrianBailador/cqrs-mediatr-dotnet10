@@ -1,24 +1,15 @@
-using CqrsMediatRDotNet10.Api.Data;
 using CqrsMediatRDotNet10.Api.Products.Commands;
 using CqrsMediatRDotNet10.Api.Products.Events;
-using Microsoft.EntityFrameworkCore;
 
 namespace CqrsMediatRDotNet10.Tests;
 
 public class CreateProductCommandHandlerTests
 {
-    private static ApplicationDbContext NewContext()
-    {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-        return new ApplicationDbContext(options);
-    }
-
     [Fact]
     public async Task Handle_PersistsProduct_AndReturnsItsId()
     {
-        await using var context = NewContext();
+        await using var db = await SqliteTestContext.CreateAsync();
+        var context = db.Context;
         var publisher = new RecordingPublisher();
         var handler = new CreateProductCommandHandler(context, publisher);
 
@@ -33,7 +24,8 @@ public class CreateProductCommandHandlerTests
     [Fact]
     public async Task Handle_PublishesProductCreatedEvent_WithTheNewId()
     {
-        await using var context = NewContext();
+        await using var db = await SqliteTestContext.CreateAsync();
+        var context = db.Context;
         var publisher = new RecordingPublisher();
         var handler = new CreateProductCommandHandler(context, publisher);
 
